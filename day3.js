@@ -7,27 +7,35 @@ var counts = {
 	total: 0
 };
 
-for (let i=0; i < triangles.length; ++i) {
-	let match = triangles[i].match(/(\d+)\s+(\d+)\s+(\d+)/);
-	let dim = match.splice(1);
-	let valid = true;
+function isValid(dim) {
 	for (let t=0; t < 3; ++t) {
 		let a = parseInt(dim[t]);
 		let b = parseInt(dim[(t+1) % 3]);
 		let c = parseInt(dim[(t+2) % 3]);
 		if (a >= (b + c)) {
-			console.log(a + " > " + (b + c));
-			valid = false;
-			break;
+			return false;
 		}
 	}
-	if (valid) {
-		counts.valid++;
+	return true;
+}
+
+for (let i=0; i < triangles.length; i+=3) {
+	let dims = [];
+	for (let t=0; t < 3; ++ t) {
+		let match = triangles[i+t].match(/(\d+)\s+(\d+)\s+(\d+)/);
+		dims = dims.concat([match[1], match[2], match[3]]);
 	}
-	else {
-		counts.invalid++;
+
+	for (let t=0; t < 3; ++t) {
+		let dim = [dims[t], dims[t+3], dims[t+6]];
+		if (isValid(dim)) {
+			counts.valid++;
+		}
+		else {
+			counts.invalid++;
+		}
+		counts.total++;
 	}
-	counts.total++;
 }
 
 console.log(JSON.stringify(counts,null,2));
