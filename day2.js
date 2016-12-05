@@ -2,38 +2,51 @@ var fs = require("fs");
 var input = fs.readFileSync("day2.data", { encoding: 'utf8' });
 var directions = input.split("\n");
 var code = [];
+var map = [[0, 0, 1, 0, 0],
+		   [0, 2, 3, 4, 0],
+		   [5, 6, 7, 8, 9],
+		   [0, 'A', 'B', 'C', 0],
+		   [0, 0, 'D', 0, 0]];
+var pos = [0, 2];
+
+function getValue(x, y) {
+	if (x < 0 || x > 4 || y < 0 || y > 4) {
+		return 0;
+	}
+	return map[y][x];
+}
+
 for (let i=0; i < directions.length; ++i) {
 	let line = directions[i];
 	let steps = line.split("");
-	let number = 5;
 
 	for (let j=0; j < steps.length; ++j) {
 		let dir = steps[j];
-		let numberWas = number;
+
 		switch(dir) {
 			case "R":
-				if (number%3 != 0) {
-					number++;
+				if (getValue(pos[0]+1, pos[1]) != 0) {
+					pos[0]++;
 				}
 				break;
 			case "L":
-				if ((number-1)%3 != 0) {
-					number--;
+				if (getValue(pos[0]-1, pos[1]) != 0) {
+					pos[0]--;
 				}
 				break;
 			case "U":
-				if (number > 3) {
-					number-=3;
+				if (getValue(pos[0], pos[1]-1) != 0) {
+					pos[1]--;
 				}
 				break;
 			case "D":
-				if (number < 7) {
-					number+=3;
+				if (getValue(pos[0], pos[1]+1) != 0) {
+					pos[1]++;
 				}
 				break;
 		}
 	}
-	code.push(number);
+	code.push(getValue(pos[0], pos[1]));
 }
 
 console.log(code.join(""));
